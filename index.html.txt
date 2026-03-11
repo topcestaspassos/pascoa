@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Ovos de Páscoa</title>
+
+<style>
+
+body{
+margin:0;
+font-family:system-ui;
+background:#f7f1e8;
+color:#222;
+}
+
+header{
+background:#2d1a10;
+color:white;
+padding:20px;
+text-align:center;
+}
+
+.hero img{
+width:100%;
+display:block;
+}
+
+.btnInicio{
+background:linear-gradient(45deg,#ffd700,#ffec8b,#ffd700);
+border:none;
+padding:18px;
+font-size:20px;
+width:100%;
+border-radius:10px;
+margin-top:15px;
+font-weight:bold;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+padding:15px;
+}
+
+.card{
+background:white;
+border-radius:12px;
+padding:15px;
+margin-bottom:15px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+}
+
+.item{
+border:2px solid #eee;
+border-radius:10px;
+padding:10px;
+text-align:center;
+cursor:pointer;
+}
+
+.item:hover{
+border-color:#ffd700;
+}
+
+.item img{
+width:100%;
+border-radius:8px;
+}
+
+select,input{
+width:100%;
+padding:10px;
+border-radius:8px;
+border:1px solid #ccc;
+margin-top:5px;
+}
+
+button{
+background:#4b2e1a;
+color:white;
+border:none;
+padding:14px;
+border-radius:10px;
+font-size:16px;
+width:100%;
+margin-top:10px;
+}
+
+.pix{
+background:#fff8cc;
+border:2px solid red;
+padding:12px;
+border-radius:10px;
+text-align:center;
+}
+
+.total{
+font-size:20px;
+font-weight:bold;
+text-align:center;
+color:#4b2e1a;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>🍫 Ovos de Páscoa Artesanais</h1>
+<p>Monte seu pedido em poucos segundos</p>
+
+</header>
+
+<div class="hero">
+
+<img src="IMAGENS/banner.jpg">
+
+</div>
+
+<div class="container">
+
+<button class="btnInicio" onclick="mostrarSistema()">
+
+INICIAR PEDIDO
+
+</button>
+
+<div id="sistema" style="display:none">
+
+<div class="card">
+
+<h3>Escolha o tipo de ovo</h3>
+
+<div class="grid">
+
+<div class="item" onclick="tipoSelecionado('classico')">
+
+<img src="IMAGENS/classico.jpg">
+Clássicos
+
+</div>
+
+<div class="item" onclick="tipoSelecionado('tradicional')">
+
+<img src="IMAGENS/tradicional.jpg">
+Tradicionais
+
+</div>
+
+<div class="item" onclick="tipoSelecionado('especial')">
+
+<img src="IMAGENS/especial.jpg">
+Especiais
+
+</div>
+
+<div class="item" onclick="tipoSelecionado('coracao')">
+
+<img src="IMAGENS/coracao.jpg">
+Coração
+
+</div>
+
+<div class="item" onclick="tipoSelecionado('colher')">
+
+<img src="IMAGENS/colher.jpg">
+Ovos de Colher
+
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Personalizar Ovo</h3>
+
+<div id="personalizacao"></div>
+
+<button onclick="adicionarCarrinho()">
+
+Adicionar ao carrinho
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>Carrinho</h3>
+
+<div id="listaCarrinho"></div>
+
+<div class="total" id="total"></div>
+
+</div>
+
+<div class="card">
+
+<h3>Entrega</h3>
+
+<select id="entrega" onchange="atualizarTotal()">
+
+<option value="0">Retirada</option>
+<option value="10">Entrega + R$10</option>
+
+</select>
+
+<h3>Horário</h3>
+
+<select id="hora">
+
+<option>08:00</option>
+<option>09:00</option>
+<option>10:00</option>
+<option>11:00</option>
+<option>12:00</option>
+<option>13:00</option>
+<option>14:00</option>
+<option>15:00</option>
+<option>16:00</option>
+<option>17:00</option>
+<option>18:00</option>
+<option>19:00</option>
+
+</select>
+
+<input id="nome" placeholder="Seu nome">
+
+<input id="telefone" placeholder="Telefone">
+
+</div>
+
+<div class="card pix">
+
+<h3>Pagar com PIX</h3>
+
+<p id="pix">(35) 99188-0133</p>
+
+<button onclick="copiarPix()">Copiar chave PIX</button>
+
+<p style="color:red;font-weight:bold">
+
+Pedido confirmado após envio do comprovante pelo WhatsApp
+
+</p>
+
+</div>
+
+<button onclick="finalizarPedido()">
+
+Enviar pedido no WhatsApp
+
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+let carrinho=[]
+let tipoAtual=""
+
+function mostrarSistema(){
+document.getElementById("sistema").style.display="block"
+}
+
+function tipoSelecionado(tipo){
+
+tipoAtual=tipo
+
+let html=""
+
+if(tipo=="classico"){
+
+html+=`Tipo de casca<select id="casca"><option>Lisa</option><option>Crocante</option></select>`
+
+html+=`Peso<select id="peso">
+<option value="55">350g - R$55</option>
+<option value="85">500g - R$85</option>
+<option value="140">1kg - R$140</option>
+</select>`
+
+}
+
+if(tipo=="tradicional"){
+
+html+=`Sabores Tradicionais<select id="sabor">
+<option>Prestígio</option>
+<option>Ninho</option>
+<option>Brigadeiro</option>
+<option>Maracujá</option>
+<option>Olho de Sogra</option>
+<option>Morango</option>
+<option>Dois Amores</option>
+</select>`
+
+html+=`Peso<select id="peso">
+<option value="80">400g - R$80</option>
+<option value="105">600g - R$105</option>
+<option value="190">1,2kg - R$190</option>
+</select>`
+
+}
+
+if(tipo=="especial"){
+
+html+=`Sabores Especiais<select id="sabor">
+<option>Nutella</option>
+<option>Nozes</option>
+<option>Kit Kat</option>
+<option>Ovomaltine</option>
+</select>`
+
+html+=`Peso<select id="peso">
+<option value="100">400g - R$100</option>
+<option value="125">600g - R$125</option>
+<option value="210">1,2kg - R$210</option>
+</select>`
+
+}
+
+if(tipo=="coracao"){
+
+html+=`Peso<select id="peso">
+<option value="150">500g - R$150</option>
+</select>`
+
+}
+
+if(tipo=="colher"){
+
+html+=`Sabores<select id="sabor">
+<option>Prestígio</option>
+<option>Ninho</option>
+<option>Brigadeiro</option>
+<option>Maracujá</option>
+<option>Olho de Sogra</option>
+<option>Morango</option>
+<option>Dois Amores</option>
+<option>Nutella</option>
+<option>Nozes</option>
+<option>Kit Kat</option>
+<option>Ovomaltine</option>
+</select>`
+
+html+=`Peso<select id="peso">
+<option value="150">500g - R$150</option>
+</select>`
+
+}
+
+html+=`Embalagem<select id="emb">
+<option>Infantil menino</option>
+<option>Infantil menina</option>
+<option>Adulto homem</option>
+<option>Adulto mulher</option>
+<option>Neutra</option>
+</select>`
+
+html+=`Quantidade<input type="number" id="qtd" value="1">`
+
+document.getElementById("personalizacao").innerHTML=html
+
+}
+
+function adicionarCarrinho(){
+
+let peso=document.getElementById("peso")
+
+let preco=peso.value
+
+let pesoTxt=peso.options[peso.selectedIndex].text
+
+let sabor=document.getElementById("sabor")?.value||""
+
+let casca=document.getElementById("casca")?.value||""
+
+let emb=document.getElementById("emb").value
+
+let qtd=document.getElementById("qtd").value
+
+let item={tipoAtual,sabor,casca,pesoTxt,preco,qtd,emb}
+
+carrinho.push(item)
+
+renderCarrinho()
+
+}
+
+function renderCarrinho(){
+
+let html=""
+
+let total=0
+
+carrinho.forEach((item,i)=>{
+
+let sub=item.preco*item.qtd
+
+total+=sub
+
+html+=`
+
+<div>
+
+${item.qtd}x ${item.tipoAtual} ${item.pesoTxt}<br>
+
+${item.sabor? "Sabor:"+item.sabor+"<br>":""}
+
+${item.casca? "Casca:"+item.casca+"<br>":""}
+
+Embalagem:${item.emb}<br>
+
+R$${sub}
+
+<button onclick="remover(${i})">Remover</button>
+
+</div>
+
+<hr>
+
+`
+
+})
+
+document.getElementById("listaCarrinho").innerHTML=html
+
+atualizarTotal()
+
+}
+
+function atualizarTotal(){
+
+let total=0
+
+carrinho.forEach(i=>{
+
+total+=i.preco*i.qtd
+
+})
+
+let entrega=document.getElementById("entrega").value
+
+total+=Number(entrega)
+
+document.getElementById("total").innerText="Total: R$"+total
+
+}
+
+function remover(i){
+
+carrinho.splice(i,1)
+
+renderCarrinho()
+
+}
+
+function copiarPix(){
+
+navigator.clipboard.writeText("(35) 99188-0133")
+
+alert("PIX copiado")
+
+}
+
+function finalizarPedido(){
+
+let nome=document.getElementById("nome").value
+
+let tel=document.getElementById("telefone").value
+
+let hora=document.getElementById("hora").value
+
+let entrega=document.getElementById("entrega").selectedOptions[0].text
+
+let msg="🍫 Pedido de Páscoa\n\n"
+
+msg+="Cliente:"+nome+"\n"
+
+msg+="Telefone:"+tel+"\n\n"
+
+msg+="Itens:\n"
+
+carrinho.forEach(i=>{
+
+msg+=`${i.qtd}x ${i.tipoAtual} ${i.pesoTxt}\n`
+
+if(i.sabor) msg+="Sabor:"+i.sabor+"\n"
+
+if(i.casca) msg+="Casca:"+i.casca+"\n"
+
+msg+="Embalagem:"+i.emb+"\n\n"
+
+})
+
+msg+="Entrega:"+entrega+"\n"
+
+msg+="Horário:"+hora+"\n"
+
+msg+="Pagamento PIX\n"
+
+msg+="Enviarei comprovante."
+
+let url="https://wa.me/5535991880133?text="+encodeURIComponent(msg)
+
+window.open(url,"_blank")
+
+}
+
+</script>
+
+</body>
+</html>
